@@ -9,7 +9,7 @@ impl_json_rust = ["json"]
 impl_serde_json = ["serde_json", "cc-traits/serde_json"]
 
 [dependencies]
-cc-traits = { path = "../cc-traits" }
+cc-traits = { git = "https://github.com/axion014/cc-traits", branch = "serde-json-map" }
 #{ version = "0.4" }
 
 json = { version = "0.12", optional = true }
