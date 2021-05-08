@@ -64,12 +64,9 @@ pub trait BuildableJson:
 	+ for<'a> From<&'a str>
 	+ From<<Self as ForeignJson>::Object>
 	+ From<<Self as ForeignJson>::Array>
+	+ std::str::FromStr<Err: std::error::Error + 'static>
 	+ Clone
 {
-	type ParseError: std::error::Error + 'static;
-
-	fn from_str(s: &str) -> Result<Self, Self::ParseError>;
-
 	fn empty_object() -> Self;
 
 	fn empty_array() -> Self;
