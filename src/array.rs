@@ -4,42 +4,42 @@ use cc_traits::{Collection,/* MapInsert,*/ Remove, Clear, Len};
 
 use crate::{ForeignJson, ForeignMutableJson};
 
-pub trait Array<'a, T: ForeignJson<'a>>:
+pub trait Array<T: ForeignJson>:
 	Collection<Item = T>
 	+ Index<usize, Output = T>
 	+ Len
 	+ PartialEq
 {
-	type Iter<'b>: Iterator<Item = &'b T> where 'a: 'b;
+	type Iter<'a>: Iterator<Item = &'a T> where T: 'a;
 
-	fn iter<'b>(&'b self) -> Self::Iter<'b> where 'a: 'b;
+	fn iter(&self) -> Self::Iter<'_>;
 }
 
-pub trait MutableArray<'a, T: ForeignMutableJson<'a>>:
-	Array<'a, T>
+pub trait MutableArray<T: ForeignMutableJson>:
+	Array<T>
 	+ IndexMut<usize, Output = T>
 	//+ MapInsert<usize>
 	+ Remove<usize>
 	+ Clear
 	+ IntoIterator<Item = T>
 {
-	type IterMut<'b>: Iterator<Item = &'b mut T> where 'a: 'b;
+	type IterMut<'a>: Iterator<Item = &'a mut T> where T: 'a;
 
-	fn iter_mut<'b>(&'b mut self) -> Self::IterMut<'b> where 'a: 'b;
+	fn iter_mut(&mut self) -> Self::IterMut<'_>;
 }
 
-impl <'a, T: ForeignJson<'a>> Array<'a, T> for Vec<T> {
-	type Iter<'b> where 'a: 'b = std::slice::Iter<'b, T>;
+impl <T: ForeignJson> Array<T> for Vec<T> {
+	type Iter<'a> where T: 'a = std::slice::Iter<'a, T>;
 
-	fn iter<'b>(&'b self) -> Self::Iter<'b> where 'a: 'b {
+	fn iter(&self) -> Self::Iter<'_> {
 		self.into_iter()
 	}
 }
 
-impl <'a, T: ForeignMutableJson<'a>> MutableArray<'a, T> for Vec<T> {
-	type IterMut<'b> where 'a: 'b = std::slice::IterMut<'b, T>;
+impl <T: ForeignMutableJson> MutableArray<T> for Vec<T> {
+	type IterMut<'a> where T: 'a = std::slice::IterMut<'a, T>;
 
-	fn iter_mut<'b>(&'b mut self) -> Self::IterMut<'b> where 'a: 'b {
+	fn iter_mut(&mut self) -> Self::IterMut<'_> {
 		self.into_iter()
 	}
 }

@@ -4,28 +4,28 @@ use cc_traits::{Collection, Get, GetMut, MapInsert, Remove, Clear, Len};
 
 use crate::{ForeignJson, ForeignMutableJson};
 
-pub trait Object<'a, T: ForeignJson<'a>>:
+pub trait Object<T: ForeignJson>:
 	Collection<Item = T>
-	+ for<'b> Get<&'b str>
-	+ for<'b> Index<&'b str, Output = T>
+	+ for<'a> Get<&'a str>
+	+ for<'a> Index<&'a str, Output = T>
 	+ Len
 	+ PartialEq
 {
-	type Iter<'b>: Iterator<Item = (&'b str, &'b T)> where 'a: 'b;
+	type Iter<'a>: Iterator<Item = (&'a str, &'a T)> where T: 'a;
 
-	fn iter<'b>(&'b self) -> Self::Iter<'b> where 'a: 'b;
+	fn iter(&self) -> Self::Iter<'_>;
 }
 
-pub trait MutableObject<'a, T: ForeignMutableJson<'a>>:
-	Object<'a, T>
-	+ for<'b> GetMut<&'b str>
-	+ for<'b> IndexMut<&'b str, Output = T>
+pub trait MutableObject<T: ForeignMutableJson>:
+	Object<T>
+	+ for<'a> GetMut<&'a str>
+	+ for<'a> IndexMut<&'a str, Output = T>
 	+ MapInsert<String>
-	+ for<'b> Remove<&'b str>
+	+ for<'a> Remove<&'a str>
 	+ Clear
 	+ IntoIterator<Item = (String, T)>
 {
-	type IterMut<'b>: Iterator<Item = (&'b str, &'b mut T)> where 'a: 'b;
+	type IterMut<'a>: Iterator<Item = (&'a str, &'a mut T)> where T: 'a;
 
-	fn iter_mut<'b>(&'b mut self) -> Self::IterMut<'b> where 'a: 'b;
+	fn iter_mut(&mut self) -> Self::IterMut<'_>;
 }

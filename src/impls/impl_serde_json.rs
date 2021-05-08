@@ -1,14 +1,12 @@
-use std::str::FromStr;
-
 use serde_json::{Value, Map};
 
 use crate::{ForeignJson, BuildableJson, ForeignMutableJson, TypedJson, Object, MutableObject};
 
-impl <'a> ForeignJson<'a> for Value {
+impl ForeignJson for Value {
 	type Object = Map<String, Self>;
 	type Array = Vec<Self>;
 
-	fn as_enum<'b>(&'b self) -> TypedJson<'a, 'b, Self> {
+	fn as_enum(&self) -> TypedJson<'_, Self> {
 		match self {
 			Value::Object(v) => TypedJson::Object(v),
 			Value::Array(v) => TypedJson::Array(v),
@@ -19,11 +17,11 @@ impl <'a> ForeignJson<'a> for Value {
 		}
 	}
 
-	fn get_attr<'b>(&'b self, k: &str) -> Option<&Self> where 'a: 'b {
+	fn get_attr<'a>(&'a self, k: &str) -> Option<&Self> {
 		self.get(k)
 	}
 
-	fn get_index<'b>(&'b self, i: usize) -> Option<&Self> where 'a: 'b {
+	fn get_index<'a>(&'a self, i: usize) -> Option<&Self> {
 		self.get(i)
 	}
 
@@ -56,13 +54,7 @@ impl <'a> ForeignJson<'a> for Value {
 	}
 }
 
-impl BuildableJson<'_> for Value {
-	type ParseError = serde_json::Error;
-
-	fn from_str(s: &str) -> Result<Self, Self::ParseError> {
-	    <Value as FromStr>::from_str(s)
-	}
-
+impl BuildableJson for Value {
 	fn empty_object() -> Self {
 	    Value::Object(Map::new())
 	}
@@ -76,12 +68,12 @@ impl BuildableJson<'_> for Value {
 	}
 }
 
-impl <'a> ForeignMutableJson<'a> for Value {
-	fn get_attr_mut<'b>(&'b mut self, k: &str) -> Option<&mut Self> where 'a: 'b {
+impl ForeignMutableJson for Value {
+	fn get_attr_mut<'a>(&'a mut self, k: &str) -> Option<&mut Self> {
 		self.get_mut(k)
 	}
 
-	fn get_index_mut<'b>(&'b mut self, i: usize) -> Option<&mut Self> where 'a: 'b {
+	fn get_index_mut<'a>(&'a mut self, i: usize) -> Option<&mut Self> {
 		self.get_mut(i)
 	}
 
@@ -102,20 +94,20 @@ fn with_str_key_mut<'a>(entry: (&'a String, &'a mut Value)) -> (&'a str, &'a mut
 	(entry.0.as_str(), entry.1)
 }
 
-impl <'a> Object<'a, Value> for Map<String, Value> {
-	type Iter<'b> where 'a: 'b =
-		std::iter::Map<serde_json::map::Iter<'b>, fn((&'b String, &'b Value)) -> (&'b str, &'b Value)>;
+impl Object<Value> for Map<String, Value> {
+	type Iter<'a> =
+		std::iter::Map<serde_json::map::Iter<'a>, fn((&'a String, &'a Value)) -> (&'a str, &'a Value)>;
 
-	fn iter<'b>(&'b self) -> Self::Iter<'b> where 'a: 'b {
+	fn iter(&self) -> Self::Iter<'_> {
 		self.iter().map(with_str_key)
 	}
 }
 
-impl <'a> MutableObject<'a, Value> for Map<String, Value> {
-	type IterMut<'b> where 'a: 'b =
-		std::iter::Map<serde_json::map::IterMut<'b>, fn((&'b String, &'b mut Value)) -> (&'b str, &'b mut Value)>;
+impl MutableObject<Value> for Map<String, Value> {
+	type IterMut<'a> =
+		std::iter::Map<serde_json::map::IterMut<'a>, fn((&'a String, &'a mut Value)) -> (&'a str, &'a mut Value)>;
 
-	fn iter_mut<'b>(&'b mut self) -> Self::IterMut<'b> where 'a: 'b {
+	fn iter_mut(&mut self) -> Self::IterMut<'_> {
 		self.iter_mut().map(with_str_key_mut)
 	}
 }
