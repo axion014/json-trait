@@ -43,6 +43,9 @@ pub trait ForeignMutableJson: ForeignJson<Object: MutableObject<Self>, Array: Mu
 
 	fn as_object_mut(&mut self) -> Option<&mut Self::Object>;
 	fn as_array_mut(&mut self) -> Option<&mut Self::Array>;
+
+	fn take_object(self) -> Option<Self::Object>;
+	fn take_array(self) -> Option<Self::Array>;
 }
 
 pub trait BuildableJson:

@@ -84,6 +84,20 @@ impl ForeignMutableJson for Value {
 	fn as_array_mut(&mut self) -> Option<&mut Vec<Self>> {
 		self.as_array_mut()
 	}
+
+	fn take_object(self) -> Option<Map<String, Self>> {
+		match self {
+			Value::Object(object) => Some(object),
+			_ => None
+		}
+	}
+
+	fn take_array(self) -> Option<Vec<Self>> {
+		match self {
+			Value::Array(array) => Some(array),
+			_ => None
+		}
+	}
 }
 
 fn with_str_key<'a>(entry: (&'a String, &'a Value)) -> (&'a str, &'a Value) {
