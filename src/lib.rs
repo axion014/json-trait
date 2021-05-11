@@ -70,9 +70,9 @@ pub trait BuildableJson:
 	+ std::str::FromStr<Err: std::error::Error + 'static>
 	+ Clone
 {
-	fn empty_object() -> Self;
+	fn empty_object() -> Self::Object;
 
-	fn empty_array() -> Self;
+	fn empty_array() -> Self::Array;
 
 	fn null() -> Self;
 }

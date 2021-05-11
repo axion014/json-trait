@@ -55,12 +55,12 @@ impl ForeignJson for Value {
 }
 
 impl BuildableJson for Value {
-	fn empty_object() -> Self {
-	    Value::Object(Map::new())
+	fn empty_object() -> <Value as ForeignJson>::Object {
+	    Map::new()
 	}
 
-	fn empty_array() -> Self {
-		Value::Array(Vec::new())
+	fn empty_array() -> <Value as ForeignJson>::Array {
+		Vec::new()
 	}
 
 	fn null() -> Self {
