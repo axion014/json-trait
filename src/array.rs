@@ -1,6 +1,6 @@
 use std::ops::{Index, IndexMut};
 
-use cc_traits::{Collection,/* MapInsert,*/ Remove, Clear, Len};
+use cc_traits::{Collection,/* MapInsert,*/ PushBack, PopBack, Remove, Clear, Len};
 
 use crate::{ForeignJson, ForeignMutableJson};
 
@@ -19,6 +19,8 @@ pub trait MutableArray<T: ForeignMutableJson>:
 	Array<T>
 	+ IndexMut<usize, Output = T>
 	//+ MapInsert<usize>
+	+ PushBack
+	+ PopBack
 	+ Remove<usize>
 	+ Clear
 	+ IntoIterator<Item = T>
