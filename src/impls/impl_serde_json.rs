@@ -85,16 +85,23 @@ impl ForeignMutableJson for Value {
 		self.as_array_mut()
 	}
 
-	fn take_object(self) -> Option<Map<String, Self>> {
+	fn into_object(self) -> Option<Map<String, Self>> {
 		match self {
 			Value::Object(object) => Some(object),
 			_ => None
 		}
 	}
 
-	fn take_array(self) -> Option<Vec<Self>> {
+	fn into_array(self) -> Option<Vec<Self>> {
 		match self {
 			Value::Array(array) => Some(array),
+			_ => None
+		}
+	}
+
+	fn into_string(self) -> Option<String> {
+		match self {
+			Value::String(string) => Some(string),
 			_ => None
 		}
 	}
