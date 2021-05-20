@@ -1,4 +1,5 @@
 use std::ops::{Index, IndexMut};
+use std::iter::FromIterator;
 
 use cc_traits::{Collection,/* MapInsert,*/ PushBack, PopBack, Remove, Clear, Len};
 
@@ -9,6 +10,7 @@ pub trait Array<T: ForeignJson>:
 	+ Index<usize, Output = T>
 	+ Len
 	+ PartialEq
+	+ FromIterator<T>
 {
 	type Iter<'a>: Iterator<Item = &'a T> where T: 'a;
 
