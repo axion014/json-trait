@@ -13,7 +13,7 @@ pub trait ForeignJson: Sized + PartialEq {
 	type Object: Object<Self>;
 	type Array: Array<Self>;
 
-	fn as_enum(&self) -> TypedJson<'_, Self>;
+	fn as_enum(&self) -> typed_json::Borrowed<'_, Self>;
 
 	fn get_attr<'a>(&'a self, k: &str) -> Option<&Self> {
         self.as_object().and_then(|a| a.get(k))
@@ -33,6 +33,8 @@ pub trait ForeignJson: Sized + PartialEq {
 }
 
 pub trait ForeignMutableJson: ForeignJson<Object: MutableObject<Self>, Array: MutableArray<Self>> {
+	fn as_enum_mut(&mut self) -> typed_json::Mutable<'_, Self>;
+
 	fn get_attr_mut<'a>(&'a mut self, k: &str) -> Option<&mut Self> {
         self.as_object_mut().and_then(|a| a.get_mut(k))
     }
@@ -43,6 +45,8 @@ pub trait ForeignMutableJson: ForeignJson<Object: MutableObject<Self>, Array: Mu
 
 	fn as_object_mut(&mut self) -> Option<&mut Self::Object>;
 	fn as_array_mut(&mut self) -> Option<&mut Self::Array>;
+
+	fn into_enum(self) -> typed_json::Owned<Self>;
 
 	fn into_object(self) -> Option<Self::Object>;
 	fn into_array(self) -> Option<Self::Array>;
@@ -78,11 +82,46 @@ pub trait BuildableJson:
 	fn null() -> Self;
 }
 
-pub enum TypedJson<'a, T: ForeignJson> {
-	Object(&'a T::Object),
-	Array(&'a T::Array),
-	Number(Option<f64>),
-    String(&'a String),
-	Null,
-    Bool(bool)
+pub mod typed_json {
+	use crate::{ForeignJson, ForeignMutableJson, BuildableJson};
+
+	pub enum Borrowed<'a, T: ForeignJson> {
+		Object(&'a T::Object),
+		Array(&'a T::Array),
+		Number(Option<f64>),
+		String(&'a String),
+		Null,
+		Bool(bool)
+	}
+
+	pub enum Mutable<'a, T: ForeignMutableJson> {
+		Object(&'a mut T::Object),
+		Array(&'a mut T::Array),
+		Number(Option<f64>),
+		String(&'a mut String),
+		Null,
+		Bool(bool)
+	}
+
+	pub enum Owned<T: ForeignMutableJson> {
+		Object(T::Object),
+		Array(T::Array),
+		Number(Option<f64>),
+		String(String),
+		Null,
+		Bool(bool)
+	}
+
+	impl <T: ForeignMutableJson + BuildableJson> Owned<T> {
+		pub fn into_untyped(self) -> T {
+			match self {
+				Owned::Object(v) => v.into(),
+				Owned::Array(v) => v.into(),
+				Owned::Number(v) => v.map_or(T::null(), |v| v.into()),
+				Owned::String(v) => v.into(),
+				Owned::Null => T::null(),
+				Owned::Bool(v) => v.into(),
+			}
+		}
+	}
 }

@@ -1,19 +1,20 @@
 use serde_json::{Value, Map};
 
-use crate::{ForeignJson, BuildableJson, ForeignMutableJson, TypedJson, Object, MutableObject};
+use crate::{ForeignJson, BuildableJson, ForeignMutableJson, Object, MutableObject};
+use crate::typed_json::{self, *};
 
 impl ForeignJson for Value {
 	type Object = Map<String, Self>;
 	type Array = Vec<Self>;
 
-	fn as_enum(&self) -> TypedJson<'_, Self> {
+	fn as_enum(&self) -> typed_json::Borrowed<'_, Self> {
 		match self {
-			Value::Object(v) => TypedJson::Object(v),
-			Value::Array(v) => TypedJson::Array(v),
-			Value::Number(v) => TypedJson::Number(v.as_f64()),
-			Value::String(v) => TypedJson::String(v),
-			Value::Null => TypedJson::Null,
-			Value::Bool(v) => TypedJson::Bool(*v)
+			Value::Object(v) => Borrowed::Object(v),
+			Value::Array(v) => Borrowed::Array(v),
+			Value::Number(v) => Borrowed::Number(v.as_f64()),
+			Value::String(v) => Borrowed::String(v),
+			Value::Null => Borrowed::Null,
+			Value::Bool(v) => Borrowed::Bool(*v)
 		}
 	}
 
@@ -69,6 +70,17 @@ impl BuildableJson for Value {
 }
 
 impl ForeignMutableJson for Value {
+	fn as_enum_mut(&mut self) -> typed_json::Mutable<'_, Self> {
+		match self {
+			Value::Object(v) => Mutable::Object(v),
+			Value::Array(v) => Mutable::Array(v),
+			Value::Number(v) => Mutable::Number(v.as_f64()),
+			Value::String(v) => Mutable::String(v),
+			Value::Null => Mutable::Null,
+			Value::Bool(v) => Mutable::Bool(*v)
+		}
+	}
+
 	fn get_attr_mut<'a>(&'a mut self, k: &str) -> Option<&mut Self> {
 		self.get_mut(k)
 	}
@@ -83,6 +95,17 @@ impl ForeignMutableJson for Value {
 
 	fn as_array_mut(&mut self) -> Option<&mut Vec<Self>> {
 		self.as_array_mut()
+	}
+
+	fn into_enum(self) -> typed_json::Owned<Self> {
+		match self {
+			Value::Object(v) => Owned::Object(v),
+			Value::Array(v) => Owned::Array(v),
+			Value::Number(v) => Owned::Number(v.as_f64()),
+			Value::String(v) => Owned::String(v),
+			Value::Null => Owned::Null,
+			Value::Bool(v) => Owned::Bool(v)
+		}
 	}
 
 	fn into_object(self) -> Option<Map<String, Self>> {
