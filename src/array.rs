@@ -25,6 +25,7 @@ pub trait MutableArray<T: ForeignMutableJson>:
 	+ PopBack
 	+ Remove<usize>
 	+ Clear
+	+ Extend<T>
 	+ IntoIterator<Item = T>
 {
 	type IterMut<'a>: Iterator<Item = &'a mut T> where T: 'a;
