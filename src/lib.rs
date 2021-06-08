@@ -9,7 +9,7 @@ mod impls;
 pub use object::{Object, MutableObject};
 pub use array::{Array, MutableArray};
 
-pub trait ForeignJson: Sized + PartialEq {
+pub trait ForeignJson: Sized + PartialEq + std::fmt::Debug {
 	type Object: Object<Self>;
 	type Array: Array<Self>;
 

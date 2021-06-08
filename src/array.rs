@@ -11,6 +11,7 @@ pub trait Array<T: ForeignJson>:
 	+ Len
 	+ PartialEq
 	+ FromIterator<T>
+	+ std::fmt::Debug
 {
 	type Iter<'a>: Iterator<Item = &'a T> where T: 'a;
 

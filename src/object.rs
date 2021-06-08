@@ -13,6 +13,7 @@ pub trait Object<T: ForeignJson>:
 	+ Len
 	+ PartialEq
 	+ FromIterator<(String, T)>
+	+ std::fmt::Debug
 {
 	type Iter<'a>: Iterator<Item = (&'a str, &'a T)> where T: 'a;
 
