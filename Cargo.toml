@@ -14,3 +14,4 @@ cc-traits = { git = "https://github.com/axion014/cc-traits", branch = "serde-jso
 
 json = { version = "0.12", optional = true }
 serde_json = { version = "1.0", optional = true }
+inline-json = { git = "https://github.com/axion014/inline-json" }

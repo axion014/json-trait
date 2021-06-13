@@ -9,6 +9,8 @@ mod impls;
 pub use object::{Object, MutableObject};
 pub use array::{Array, MutableArray};
 
+pub use inline_json::json;
+
 pub trait ForeignJson: Sized + PartialEq + std::fmt::Debug {
 	type Object: Object<Self>;
 	type Array: Array<Self>;
