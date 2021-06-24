@@ -2,12 +2,12 @@
 
 use cc_traits::{Get, GetMut};
 
-mod object;
 mod array;
 mod impls;
+mod object;
 
-pub use object::{Object, MutableObject};
 pub use array::{Array, MutableArray};
+pub use object::{MutableObject, Object};
 
 pub use inline_json::json;
 
@@ -18,8 +18,8 @@ pub trait ForeignJson: Sized + PartialEq + std::fmt::Debug {
 	fn as_enum(&self) -> typed_json::Borrowed<'_, Self>;
 
 	fn get_attr<'a>(&'a self, k: &str) -> Option<&Self> {
-        self.as_object().and_then(|a| a.get(k))
-    }
+		self.as_object().and_then(|a| a.get(k))
+	}
 
 	fn get_index<'a>(&'a self, i: usize) -> Option<&Self> {
 		self.as_array().map(|a| &a[i])
@@ -27,8 +27,8 @@ pub trait ForeignJson: Sized + PartialEq + std::fmt::Debug {
 
 	fn as_object(&self) -> Option<&Self::Object>;
 	fn as_array(&self) -> Option<&Self::Array>;
-    fn as_number(&self) -> Option<Option<f64>>;
-    fn as_string(&self) -> Option<&str>;
+	fn as_number(&self) -> Option<Option<f64>>;
+	fn as_string(&self) -> Option<&str>;
 	fn as_bool(&self) -> Option<bool>;
 
 	fn is_null(&self) -> bool;
@@ -38,8 +38,8 @@ pub trait ForeignMutableJson: ForeignJson<Object: MutableObject<Self>, Array: Mu
 	fn as_enum_mut(&mut self) -> typed_json::Mutable<'_, Self>;
 
 	fn get_attr_mut<'a>(&'a mut self, k: &str) -> Option<&mut Self> {
-        self.as_object_mut().and_then(|a| a.get_mut(k))
-    }
+		self.as_object_mut().and_then(|a| a.get_mut(k))
+	}
 
 	fn get_index_mut<'a>(&'a mut self, i: usize) -> Option<&mut Self> {
 		self.as_array_mut().map(|a| &mut a[i])
@@ -85,7 +85,7 @@ pub trait BuildableJson:
 }
 
 pub mod typed_json {
-	use crate::{ForeignJson, ForeignMutableJson, BuildableJson};
+	use crate::{BuildableJson, ForeignJson, ForeignMutableJson};
 
 	pub enum Borrowed<'a, T: ForeignJson> {
 		Object(&'a T::Object),
@@ -114,7 +114,7 @@ pub mod typed_json {
 		Bool(bool)
 	}
 
-	impl <T: ForeignMutableJson + BuildableJson> Owned<T> {
+	impl<T: ForeignMutableJson + BuildableJson> Owned<T> {
 		pub fn into_untyped(self) -> T {
 			match self {
 				Owned::Object(v) => v.into(),
@@ -122,7 +122,7 @@ pub mod typed_json {
 				Owned::Number(v) => v.map_or(T::null(), |v| v.into()),
 				Owned::String(v) => v.into(),
 				Owned::Null => T::null(),
-				Owned::Bool(v) => v.into(),
+				Owned::Bool(v) => v.into()
 			}
 		}
 	}

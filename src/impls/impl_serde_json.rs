@@ -1,7 +1,7 @@
-use serde_json::{Value, Map};
+use serde_json::{Map, Value};
 
-use crate::{ForeignJson, BuildableJson, ForeignMutableJson, Object, MutableObject};
 use crate::typed_json::{self, *};
+use crate::{BuildableJson, ForeignJson, ForeignMutableJson, MutableObject, Object};
 
 impl ForeignJson for Value {
 	type Object = Map<String, Self>;
@@ -34,7 +34,7 @@ impl ForeignJson for Value {
 		self.as_array()
 	}
 
-    fn as_number(&self) -> Option<Option<f64>> {
+	fn as_number(&self) -> Option<Option<f64>> {
 		if self.is_number() {
 			Some(self.as_f64())
 		} else {
@@ -42,7 +42,7 @@ impl ForeignJson for Value {
 		}
 	}
 
-    fn as_string(&self) -> Option<&str> {
+	fn as_string(&self) -> Option<&str> {
 		self.as_str()
 	}
 
@@ -57,7 +57,7 @@ impl ForeignJson for Value {
 
 impl BuildableJson for Value {
 	fn empty_object() -> <Value as ForeignJson>::Object {
-	    Map::new()
+		Map::new()
 	}
 
 	fn empty_array() -> <Value as ForeignJson>::Array {
@@ -139,8 +139,7 @@ fn with_str_key_mut<'a>(entry: (&'a String, &'a mut Value)) -> (&'a str, &'a mut
 }
 
 impl Object<Value> for Map<String, Value> {
-	type Iter<'a> =
-		std::iter::Map<serde_json::map::Iter<'a>, fn((&'a String, &'a Value)) -> (&'a str, &'a Value)>;
+	type Iter<'a> = std::iter::Map<serde_json::map::Iter<'a>, fn((&'a String, &'a Value)) -> (&'a str, &'a Value)>;
 
 	fn iter(&self) -> Self::Iter<'_> {
 		self.iter().map(with_str_key)
@@ -148,8 +147,7 @@ impl Object<Value> for Map<String, Value> {
 }
 
 impl MutableObject<Value> for Map<String, Value> {
-	type IterMut<'a> =
-		std::iter::Map<serde_json::map::IterMut<'a>, fn((&'a String, &'a mut Value)) -> (&'a str, &'a mut Value)>;
+	type IterMut<'a> = std::iter::Map<serde_json::map::IterMut<'a>, fn((&'a String, &'a mut Value)) -> (&'a str, &'a mut Value)>;
 
 	fn iter_mut(&mut self) -> Self::IterMut<'_> {
 		self.iter_mut().map(with_str_key_mut)
