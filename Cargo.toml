@@ -3,6 +3,9 @@ name = "json-trait"
 version = "0.1.0"
 authors = ["axion014 <axion014@gmail.com>"]
 edition = "2018"
+description = "Abstract interface over multiple JSON representations"
+license = "MIT"
+repository = "https://github.com/axion014/json-trait/"
 
 [features]
 impl_json_rust = ["json"]
