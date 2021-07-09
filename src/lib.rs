@@ -91,7 +91,7 @@ pub mod typed_json {
 		Object(&'a T::Object),
 		Array(&'a T::Array),
 		Number(Option<f64>),
-		String(&'a String),
+		String(&'a str),
 		Null,
 		Bool(bool)
 	}
@@ -100,7 +100,7 @@ pub mod typed_json {
 		Object(&'a mut T::Object),
 		Array(&'a mut T::Array),
 		Number(Option<f64>),
-		String(&'a mut String),
+		String(&'a mut str),
 		Null,
 		Bool(bool)
 	}
