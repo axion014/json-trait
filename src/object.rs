@@ -11,6 +11,7 @@ pub trait Object<T: ForeignJson>:
 {
 	type Iter<'a>: Iterator<Item = (&'a str, &'a T)>
 	where
+		Self: 'a,
 		T: 'a;
 
 	fn iter(&self) -> Self::Iter<'_>;
@@ -21,6 +22,7 @@ pub trait MutableObject<T: ForeignMutableJson>:
 {
 	type IterMut<'a>: Iterator<Item = (&'a str, &'a mut T)>
 	where
+		Self: 'a,
 		T: 'a;
 
 	fn iter_mut(&mut self) -> Self::IterMut<'_>;

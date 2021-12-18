@@ -8,6 +8,7 @@ use crate::{ForeignJson, ForeignMutableJson};
 pub trait Array<T: ForeignJson>: Collection<Item = T> + Index<usize, Output = T> + Len + PartialEq + FromIterator<T> + std::fmt::Debug {
 	type Iter<'a>: Iterator<Item = &'a T>
 	where
+		Self: 'a,
 		T: 'a;
 
 	fn iter(&self) -> Self::Iter<'_>;
@@ -24,7 +25,10 @@ pub trait MutableArray<T: ForeignMutableJson>:
 	+ Extend<T>
 	+ IntoIterator<Item = T>
 {
-	type IterMut<'a>: Iterator<Item = &'a mut T> where T: 'a;
+	type IterMut<'a>: Iterator<Item = &'a mut T>
+	where
+		Self: 'a,
+		T: 'a;
 
 	fn iter_mut(&mut self) -> Self::IterMut<'_>;
 }
